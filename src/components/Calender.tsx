@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import moment, { Moment } from 'moment';
 
 import ArrowBack from '@material-ui/icons/ArrowBack';
@@ -43,19 +43,41 @@ const getPrevMonth = (month: number) => {
 	return month - 1 < 1 ? 12 : month - 1;
 };
 
-const daysOfMonth = new Array(42);
+const daysOfMonth = new Array(42).fill(0);
 
 export default function Calender({}: CalenderProps) {
 	const [year, setYear] = useState(2021);
 	const [month, setMonth] = useState(11);
 	const [day, setDay] = useState(3);
 	const [today, setToday] = useState();
+	const [daysArray, setDaysArray] = useState<Array<number>>([]);
 
-	const firstDay = moment(`${year}/${month}/1`);
-	const weekdayOfFirst = getWeekday(firstDay);
-	const daysArray = daysOfMonth.map((_, index) => {
-		return index;
-	});
+	useEffect(() => {
+		const firstDay = moment(`${year}/${month}/1`);
+		const weekdayOfFirst = getWeekday(firstDay);
+		setDaysArray(
+			daysOfMonth.map((_, index) => {
+				const dayIndex = index - weekdayOfFirst;
+				const monthDetail = MONTH_TABLE.get(month);
+				if (!monthDetail) {
+					return dayIndex;
+				}
+
+				if (dayIndex <= 0) {
+					const prevMonthDetail = MONTH_TABLE.get(getPrevMonth(month));
+					return prevMonthDetail ? prevMonthDetail.days(year) + dayIndex : 0;
+				}
+				if (dayIndex > monthDetail.days(year)) {
+					return dayIndex - monthDetail.days(year);
+				}
+				return dayIndex;
+			})
+		);
+	}, [year, month]);
+
+	useEffect(() => {
+		console.log('daysArray', daysArray);
+	}, [daysArray]);
 
 	const handleNextDay = () => {
 		setDay((prev) => prev + 1);
@@ -90,8 +112,12 @@ export default function Calender({}: CalenderProps) {
 			<IconButton onClick={handleNextDay}>
 				<ArrowForward />
 			</IconButton>
-			<CircleButton variant={'contained'}>{'10'}</CircleButton>
-			<div>{getWeekday(moment())}</div>
+			{/* <div>{getWeekday(moment())}</div> */}
+			{daysArray.map((value, index) => (
+				<CircleButton key={index} variant={'contained'}>
+					{value}
+				</CircleButton>
+			))}
 		</div>
 	);
 }
