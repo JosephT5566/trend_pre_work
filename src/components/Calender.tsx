@@ -110,7 +110,7 @@ export default function Calender({}: CalenderProps) {
 				};
 			})
 		);
-	}, [year, month]);
+	}, [year, month, selectedDay]);
 
 	useEffect(() => {
 		console.log('daysArray', daysArray);
@@ -151,7 +151,15 @@ export default function Calender({}: CalenderProps) {
 			</IconButton>
 			{/* <div>{getWeekday(moment())}</div> */}
 			{daysArray.map((day, index) => (
-				<CircleButton key={index} active={day.active} today={day.isToday} disabled={day.disabled}>
+				<CircleButton
+					key={index}
+					active={day.active}
+					today={day.isToday}
+					disabled={day.disabled}
+					onClick={() => {
+						setSelectedDay(day.date);
+					}}
+				>
 					{day.date.format('DD')}
 				</CircleButton>
 			))}
