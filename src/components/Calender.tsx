@@ -1,13 +1,112 @@
-import React from 'react';
+import React, { useState } from 'react';
+import moment, { Moment } from 'moment';
 
+import ArrowBack from '@material-ui/icons/ArrowBack';
+import ArrowForward from '@material-ui/icons/ArrowForward';
+import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
 import { CircleButton } from 'components/base/Button';
+import { CENTURIES_TABLE, MONTH_TABLE } from 'constant/static';
 
-export default function Calender() {
+interface CalenderProps {
+	date: string | null;
+	onSelect: (date: Moment) => void;
+}
+
+interface IDate {
+	date: Moment;
+	disabled: boolean;
+	active: boolean;
+	today: boolean;
+}
+
+const isLeapYear = (year: number): boolean => {
+	if (year % 4 !== 0) {
+		return false;
+	}
+	if (year % 100 === 0) {
+		if (year % 400 === 0) {
+			return true;
+		}
+		return false;
+	}
+	return true;
+};
+
+const getWeekday = (date: Moment): number => {
+	const year = date.year();
+	const month = date.month();
+	const day = date.day();
+
+	const initDay = CENTURIES_TABLE.get(Math.floor(year / 100));
+	const monthBias = MONTH_TABLE.get(month);
+
+	if (initDay !== undefined && monthBias !== undefined) {
+		const weekday = (initDay + (year % 100) + Math.floor((year % 100) / 4) + monthBias + day) % 7;
+		// console.log(date.weekday());
+		return weekday;
+	}
+	return 0;
+};
+
+const daysOfMonth = new Array(42);
+
+export default function Calender({}: CalenderProps) {
+	const [year, setYear] = useState(2021);
+	const [month, setMonth] = useState(11);
+	const [day, setDay] = useState(3);
+	const [today, setToday] = useState();
+
+	// const firstDay = moment(`${year}/${month}/1`);
+	// const weekdayOfFirst = getWeekday(firstDay);
+	// const daysArray = daysOfMonth.map((_, index) => {
+
+	// });
+
+	const handleNextDay = () => {
+		setDay((prev) => prev + 1);
+	};
+
+	const handleNextMonth = () => {
+		setMonth((prev) => prev + 1);
+	};
+
+	const handleNextYear = () => {
+		setYear((prev) => prev + 1);
+	};
+
+	const handlePrevDay = () => {
+		setDay((prev) => prev - 1);
+	};
+
+	const handlePrevMonth = () => {
+		setMonth((prev) => prev - 1);
+	};
+
+	const handlePrevYear = () => {
+		setYear((prev) => prev - 1);
+	};
+
 	return (
-		<>
+		<div>
+			<IconButton onClick={handlePrevDay}>
+				<ArrowBack />
+			</IconButton>
+			<Button>{year}</Button>
+			<IconButton onClick={handleNextDay}>
+				<ArrowForward />
+			</IconButton>
 			<CircleButton variant={'contained'}>{'10'}</CircleButton>
-			<CircleButton variant={'contained'}>{'1'}</CircleButton>
-			<CircleButton variant={'contained'}>{'31'}</CircleButton>
-		</>
+			<div>{getWeekday(moment())}</div>
+			<div>{isLeapYear(2300) ? 'yes' : 'no'}</div>
+		</div>
 	);
 }
+
+const MonthSelector = () => {
+	const month = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+};
+
+const YearSelector = () => {
+	const years = [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022];
+};
