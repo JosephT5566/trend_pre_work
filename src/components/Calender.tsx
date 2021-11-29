@@ -20,26 +20,13 @@ interface IDate {
 	today: boolean;
 }
 
-const isLeapYear = (year: number): boolean => {
-	if (year % 4 !== 0) {
-		return false;
-	}
-	if (year % 100 === 0) {
-		if (year % 400 === 0) {
-			return true;
-		}
-		return false;
-	}
-	return true;
-};
-
 const getWeekday = (date: Moment): number => {
 	const year = date.year();
 	const month = date.month();
 	const day = date.day();
 
 	const initDay = CENTURIES_TABLE.get(Math.floor(year / 100));
-	const monthBias = MONTH_TABLE.get(month);
+	const monthBias = MONTH_TABLE.get(month)?.bias(year);
 
 	if (initDay !== undefined && monthBias !== undefined) {
 		const weekday = (initDay + (year % 100) + Math.floor((year % 100) / 4) + monthBias + day) % 7;
@@ -47,6 +34,13 @@ const getWeekday = (date: Moment): number => {
 		return weekday;
 	}
 	return 0;
+};
+
+const getNextMonth = (month: number) => {
+	return month + 1 > 12 ? 1 : month + 1;
+};
+const getPrevMonth = (month: number) => {
+	return month - 1 < 1 ? 12 : month - 1;
 };
 
 const daysOfMonth = new Array(42);
@@ -57,11 +51,11 @@ export default function Calender({}: CalenderProps) {
 	const [day, setDay] = useState(3);
 	const [today, setToday] = useState();
 
-	// const firstDay = moment(`${year}/${month}/1`);
-	// const weekdayOfFirst = getWeekday(firstDay);
-	// const daysArray = daysOfMonth.map((_, index) => {
-
-	// });
+	const firstDay = moment(`${year}/${month}/1`);
+	const weekdayOfFirst = getWeekday(firstDay);
+	const daysArray = daysOfMonth.map((_, index) => {
+		return index;
+	});
 
 	const handleNextDay = () => {
 		setDay((prev) => prev + 1);
@@ -98,7 +92,6 @@ export default function Calender({}: CalenderProps) {
 			</IconButton>
 			<CircleButton variant={'contained'}>{'10'}</CircleButton>
 			<div>{getWeekday(moment())}</div>
-			<div>{isLeapYear(2300) ? 'yes' : 'no'}</div>
 		</div>
 	);
 }
