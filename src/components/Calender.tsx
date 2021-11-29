@@ -17,7 +17,7 @@ interface IDate {
 	date: Moment;
 	disabled: boolean;
 	active: boolean;
-	today: boolean;
+	isToday: boolean;
 }
 
 const getWeekday = (date: Moment): number => {
@@ -49,7 +49,8 @@ export default function Calender({}: CalenderProps) {
 	const [year, setYear] = useState(moment().year());
 	const [month, setMonth] = useState(moment().month());
 	const [day, setDay] = useState(moment().day());
-	const [today, setToday] = useState(moment());
+	const [selectedDay, setSelectedDay] = useState(moment());
+	const [today] = useState(moment());
 	const [daysArray, setDaysArray] = useState<Array<IDate>>([]);
 
 	// useEffect(() => {
@@ -70,7 +71,7 @@ export default function Calender({}: CalenderProps) {
 				let date: Moment;
 				let disabled = true;
 				let active = false;
-				let today = false;
+				let isToday = false;
 
 				if (dayIndex <= 0) {
 					const prevMonth = getPrevMonth(month);
@@ -81,7 +82,7 @@ export default function Calender({}: CalenderProps) {
 						date,
 						disabled,
 						active,
-						today,
+						isToday,
 					};
 				}
 				if (dayIndex > monthDetail.days(year)) {
@@ -92,18 +93,20 @@ export default function Calender({}: CalenderProps) {
 						date,
 						disabled,
 						active,
-						today,
+						isToday,
 					};
 				}
 
 				date = moment(`${year}/${month + 1}/${dayIndex}`);
 				disabled = false;
+				isToday = date.isSame(today.format('YYYY-MM-DD'));
+				active = date.isSame(selectedDay.format('YYYY-MM-DD'));
 
 				return {
 					date,
 					disabled,
 					active,
-					today,
+					isToday,
 				};
 			})
 		);
@@ -148,7 +151,7 @@ export default function Calender({}: CalenderProps) {
 			</IconButton>
 			{/* <div>{getWeekday(moment())}</div> */}
 			{daysArray.map((day, index) => (
-				<CircleButton key={index} variant={'contained'}>
+				<CircleButton key={index} active={day.active} today={day.isToday} disabled={day.disabled}>
 					{day.date.format('DD')}
 				</CircleButton>
 			))}
