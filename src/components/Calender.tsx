@@ -37,20 +37,24 @@ const getWeekday = (date: Moment): number => {
 };
 
 const getNextMonth = (month: number) => {
-	return month + 1 > 12 ? 1 : month + 1;
+	return month + 1 > 11 ? 0 : month + 1;
 };
 const getPrevMonth = (month: number) => {
-	return month - 1 < 1 ? 12 : month - 1;
+	return month - 1 < 0 ? 11 : month - 1;
 };
 
 const daysOfMonth = new Array(42).fill(0);
 
 export default function Calender({}: CalenderProps) {
-	const [year, setYear] = useState(2021);
-	const [month, setMonth] = useState(11);
-	const [day, setDay] = useState(3);
-	const [today, setToday] = useState();
-	const [daysArray, setDaysArray] = useState<Array<number>>([]);
+	const [year, setYear] = useState(moment().year());
+	const [month, setMonth] = useState(moment().month());
+	const [day, setDay] = useState(moment().day());
+	const [today, setToday] = useState(moment());
+	const [daysArray, setDaysArray] = useState<Array<IDate>>([]);
+
+	// useEffect(() => {
+	// 	console.log('today', today.month(), today.format('YYYY-MM-DD'));
+	// }, []);
 
 	useEffect(() => {
 		const firstDay = moment(`${year}/${month}/1`);
@@ -60,17 +64,47 @@ export default function Calender({}: CalenderProps) {
 				const dayIndex = index - weekdayOfFirst;
 				const monthDetail = MONTH_TABLE.get(month);
 				if (!monthDetail) {
-					return dayIndex;
+					return {} as IDate;
 				}
 
+				let date: Moment;
+				let disabled = true;
+				let active = false;
+				let today = false;
+
 				if (dayIndex <= 0) {
-					const prevMonthDetail = MONTH_TABLE.get(getPrevMonth(month));
-					return prevMonthDetail ? prevMonthDetail.days(year) + dayIndex : 0;
+					const prevMonth = getPrevMonth(month);
+					const prevMonthDetail = MONTH_TABLE.get(prevMonth);
+					const day = prevMonthDetail ? prevMonthDetail.days(year) + dayIndex : 0;
+					date = moment(`${year}/${prevMonth + 1}/${day}`);
+					return {
+						date,
+						disabled,
+						active,
+						today,
+					};
 				}
 				if (dayIndex > monthDetail.days(year)) {
-					return dayIndex - monthDetail.days(year);
+					const nextMonth = getNextMonth(month);
+					const day = dayIndex - monthDetail.days(year);
+					date = moment(`${year}/${nextMonth + 1}/${day}`);
+					return {
+						date,
+						disabled,
+						active,
+						today,
+					};
 				}
-				return dayIndex;
+
+				date = moment(`${year}/${month + 1}/${dayIndex}`);
+				disabled = false;
+
+				return {
+					date,
+					disabled,
+					active,
+					today,
+				};
 			})
 		);
 	}, [year, month]);
@@ -113,9 +147,9 @@ export default function Calender({}: CalenderProps) {
 				<ArrowForward />
 			</IconButton>
 			{/* <div>{getWeekday(moment())}</div> */}
-			{daysArray.map((value, index) => (
+			{daysArray.map((day, index) => (
 				<CircleButton key={index} variant={'contained'}>
-					{value}
+					{day.date.format('DD')}
 				</CircleButton>
 			))}
 		</div>
