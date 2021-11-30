@@ -1,6 +1,6 @@
 import Button, { ButtonProps } from '@material-ui/core/Button';
 
-export const CircleButton = (props: ButtonProps & { active: boolean; today: boolean }) => {
+export const CircleButton = (props: ButtonProps & { active: boolean; today?: boolean }) => {
 	const { active, today, children, ...otherProps } = props;
 
 	return (

@@ -60,12 +60,23 @@ interface CalenderProps {
 	onSelect: (date: Moment) => void;
 }
 
-interface IDate {
-	date: Moment;
+interface IButton {
 	disabled: boolean;
 	active: boolean;
-	isToday: boolean;
 }
+
+type IDateButton = IButton & {
+	date: Moment;
+	isToday: boolean;
+};
+
+type IMonthButton = IButton & {
+	month: number;
+};
+
+type IYearButton = IButton & {
+	year: number;
+};
 
 const getWeekday = (date: Moment): number => {
 	const year = date.year();
@@ -168,7 +179,7 @@ const DaySelector = (props: {
 	onClick: (month: Moment) => void;
 }) => {
 	const { year, month, today, selectedDay, dispatch, onClick } = props;
-	const [daysArray, setDaysArray] = useState<Array<IDate>>([]);
+	const [daysArray, setDaysArray] = useState<Array<IDateButton>>([]);
 
 	useEffect(() => {
 		console.log('daysArray', daysArray);
@@ -266,8 +277,13 @@ const MonthSelector = (props: {
 	dispatch: React.Dispatch<SelectAction>;
 	onClick: (month: number) => void;
 }) => {
-	const { year, dispatch } = props;
+	const { year, month, dispatch } = props;
 	const monthes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+	const monthesArray: Array<IMonthButton> = monthes.map((value) => {
+		return value === month
+			? { month: value, active: true, disabled: false }
+			: { month: value, active: false, disabled: false };
+	});
 
 	return (
 		<>
@@ -287,18 +303,17 @@ const MonthSelector = (props: {
 				</IconButton>
 			</NavBar>
 			<div>
-				{monthes.map((month, index) => (
+				{monthesArray.map((month, index) => (
 					<CircleButton
 						key={index}
-						active={true}
-						today={true}
-						disabled={false}
+						active={month.active}
+						disabled={month.disabled}
 						onClick={() => {
 							// setSelectedDay(month.date);
 							dispatch({ type: SelectActionKind.DaySelect });
 						}}
 					>
-						{MONTH_TABLE[month].label}
+						{MONTH_TABLE[month.month].label}
 					</CircleButton>
 				))}
 			</div>
@@ -312,12 +327,21 @@ const YearSelector = (props: {
 	onClick: (month: number) => void;
 }) => {
 	const { year, dispatch, onClick } = props;
-	const [yearInit, setYearInit] = useState(Math.floor(year / 10) * 10 - 1);
-	const [yearsArray, setYearsArray] = useState<Array<number>>([]);
+	const [yearInit, setYearInit] = useState(Math.floor(year / 10) * 10);
+	const [yearsArray, setYearsArray] = useState<Array<IYearButton>>([]);
 
 	useEffect(() => {
-		const array = new Array(12).fill(0).map((_, index) => yearInit + index);
-		setYearsArray(array);
+		const array = new Array(10).fill(0).map((_, index) => {
+			return yearInit + index === year
+				? { year: yearInit + index, active: true, disabled: false }
+				: { year: yearInit + index, active: false, disabled: false };
+		});
+
+		setYearsArray([
+			{ year: yearInit - 1, disabled: true, active: false },
+			...array,
+			{ year: yearInit + 10, disabled: true, active: false },
+		]);
 	}, [yearInit]);
 
 	return (
@@ -331,7 +355,7 @@ const YearSelector = (props: {
 						dispatch({ type: SelectActionKind.MonthSelect });
 					}}
 				>
-					{`${yearInit + 1}-${yearInit + 11}`}
+					{`${yearInit} - ${yearInit + 9}`}
 				</Button>
 				<IconButton>
 					<ArrowForward />
@@ -341,15 +365,14 @@ const YearSelector = (props: {
 				{yearsArray.map((year, index) => (
 					<CircleButton
 						key={index}
-						active={true}
-						today={true}
-						disabled={false}
+						active={year.active}
+						disabled={year.disabled}
 						onClick={() => {
 							// setSelectedDay(month.date);
 							dispatch({ type: SelectActionKind.MonthSelect });
 						}}
 					>
-						{year}
+						{year.year}
 					</CircleButton>
 				))}
 			</div>
