@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import moment, { Moment } from 'moment';
 
 import ArrowBack from '@material-ui/icons/ArrowBack';
@@ -7,6 +7,30 @@ import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import { CircleButton } from 'components/base/Button';
 import { CENTURIES_TABLE, MONTH_TABLE } from 'constant/static';
+
+enum SelectActionKind {
+	YearSelect = 'YearSelect',
+	MonthSelect = 'MonthSelect',
+	DaySelect = 'DaySelect',
+}
+
+interface SelectAction {
+	type: SelectActionKind;
+}
+
+const selectTypeReducer = (state: SelectActionKind, action: SelectAction) => {
+	const { type } = action;
+	switch (type) {
+		case SelectActionKind.YearSelect:
+			return SelectActionKind.YearSelect;
+		case SelectActionKind.MonthSelect:
+			return SelectActionKind.MonthSelect;
+		case SelectActionKind.DaySelect:
+			return SelectActionKind.MonthSelect;
+		default:
+			return state;
+	}
+};
 
 interface CalenderProps {
 	date: string | null;
@@ -51,10 +75,15 @@ export default function Calender({}: CalenderProps) {
 	const [selectedDay, setSelectedDay] = useState(moment());
 	const [today] = useState(moment());
 	const [daysArray, setDaysArray] = useState<Array<IDate>>([]);
+	const [step, dispatch] = useReducer(selectTypeReducer, SelectActionKind.DaySelect);
 
 	// useEffect(() => {
 	// 	console.log('today', today.month(), today.format('YYYY-MM-DD'));
 	// }, []);
+
+	useEffect(() => {
+		console.log('step', step);
+	}, [step]);
 
 	useEffect(() => {
 		console.log('selectedDay', selectedDay.format('YYYY-MM-DD'));
@@ -120,24 +149,8 @@ export default function Calender({}: CalenderProps) {
 		setSelectedDay((prev) => prev.add(1, 'day'));
 	};
 
-	const handleNextMonth = () => {
-		setMonth((prev) => prev + 1);
-	};
-
-	const handleNextYear = () => {
-		setYear((prev) => prev + 1);
-	};
-
 	const handlePrevDay = () => {
 		setSelectedDay(moment());
-	};
-
-	const handlePrevMonth = () => {
-		setMonth((prev) => prev - 1);
-	};
-
-	const handlePrevYear = () => {
-		setYear((prev) => prev - 1);
 	};
 
 	return (
@@ -145,7 +158,11 @@ export default function Calender({}: CalenderProps) {
 			<IconButton onClick={handlePrevDay}>
 				<ArrowBack />
 			</IconButton>
-			<Button>{`${year} ${MONTH_TABLE[month].label}`}</Button>
+			<Button
+				onClick={() => {
+					dispatch({ type: SelectActionKind.MonthSelect });
+				}}
+			>{`${year} ${MONTH_TABLE[month].label}`}</Button>
 			<IconButton onClick={handleNextDay}>
 				<ArrowForward />
 			</IconButton>
