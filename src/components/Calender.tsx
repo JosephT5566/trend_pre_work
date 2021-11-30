@@ -76,7 +76,8 @@ const getWeekday = (date: Moment): number => {
 	const monthBias = MONTH_TABLE[month].bias(year);
 
 	if (initDay !== undefined) {
-		const weekday = (initDay + (year % 100) + Math.floor((year % 100) / 4) + monthBias + day) % 7;
+		const weekday =
+			(initDay + (year % 100) + Math.floor((year % 100) / 4) + monthBias + day) % 7;
 		// console.log(date.weekday());
 		return weekday;
 	}
@@ -97,12 +98,7 @@ export default function Calender({}: CalenderProps) {
 	const [month, setMonth] = useState(moment().month());
 	const [selectedDay, setSelectedDay] = useState(moment());
 	const [today] = useState(moment());
-	const [daysArray, setDaysArray] = useState<Array<IDate>>([]);
 	const [step, dispatch] = useReducer(selectTypeReducer, SelectActionKind.DaySelect);
-
-	// useEffect(() => {
-	// 	console.log('today', today.month(), today.format('YYYY-MM-DD'));
-	// }, []);
 
 	useEffect(() => {
 		console.log('step', step);
@@ -111,6 +107,53 @@ export default function Calender({}: CalenderProps) {
 	useEffect(() => {
 		console.log('selectedDay', selectedDay.format('YYYY-MM-DD'));
 	}, [selectedDay]);
+
+	const handleNextDay = () => {
+		setSelectedDay((prev) => prev.add(1, 'day'));
+	};
+
+	const handlePrevDay = () => {
+		setSelectedDay(moment());
+	};
+
+	return (
+		<CalenderContainer>
+			{step === SelectActionKind.DaySelect ? (
+				<DaySelector
+					year={year}
+					month={month}
+					today={today}
+					selectedDay={selectedDay}
+					dispatch={dispatch}
+					onClick={(date) => setSelectedDay(date)}
+				/>
+			) : (
+				<MonthSelector
+					year={year}
+					month={month}
+					dispatch={dispatch}
+					onClick={(month) => setMonth(month)}
+				/>
+			)}
+			<div>{step}</div>
+		</CalenderContainer>
+	);
+}
+
+const DaySelector = (props: {
+	year: number;
+	month: number;
+	today: Moment;
+	selectedDay: Moment;
+	dispatch: React.Dispatch<SelectAction>;
+	onClick: (month: Moment) => void;
+}) => {
+	const { year, month, today, selectedDay, dispatch, onClick } = props;
+	const [daysArray, setDaysArray] = useState<Array<IDate>>([]);
+
+	useEffect(() => {
+		console.log('daysArray', daysArray);
+	}, [daysArray]);
 
 	useEffect(() => {
 		const firstDay = moment(`${year}/${month}/1`);
@@ -164,58 +207,39 @@ export default function Calender({}: CalenderProps) {
 		);
 	}, [year, month, selectedDay]);
 
-	useEffect(() => {
-		console.log('daysArray', daysArray);
-	}, [daysArray]);
-
-	const handleNextDay = () => {
-		setSelectedDay((prev) => prev.add(1, 'day'));
-	};
-
-	const handlePrevDay = () => {
-		setSelectedDay(moment());
-	};
-
 	return (
-		<CalenderContainer>
-			{step === SelectActionKind.DaySelect ? (
-				<>
-					<NavBar>
-						<IconButton onClick={handlePrevDay}>
-							<ArrowBack />
-						</IconButton>
-						<Button
-							onClick={() => {
-								dispatch({ type: SelectActionKind.MonthSelect });
-							}}
-						>{`${year} ${MONTH_TABLE[month].label}`}</Button>
-						<IconButton onClick={handleNextDay}>
-							<ArrowForward />
-						</IconButton>
-					</NavBar>
-					<div>
-						{daysArray.map((day, index) => (
-							<CircleButton
-								key={index}
-								active={day.active}
-								today={day.isToday}
-								disabled={day.disabled}
-								onClick={() => {
-									setSelectedDay(day.date);
-								}}
-							>
-								{day.date.format('DD')}
-							</CircleButton>
-						))}
-					</div>
-				</>
-			) : (
-				<MonthSelector year={year} month={month} dispatch={dispatch} onClick={(month) => setMonth(month)} />
-			)}
-			<div>{step}</div>
-		</CalenderContainer>
+		<>
+			<NavBar>
+				<IconButton>
+					<ArrowBack />
+				</IconButton>
+				<Button
+					onClick={() => {
+						dispatch({ type: SelectActionKind.MonthSelect });
+					}}
+				>{`${year} ${MONTH_TABLE[month].label}`}</Button>
+				<IconButton>
+					<ArrowForward />
+				</IconButton>
+			</NavBar>
+			<div>
+				{daysArray.map((day, index) => (
+					<CircleButton
+						key={index}
+						active={day.active}
+						today={day.isToday}
+						disabled={day.disabled}
+						onClick={() => {
+							onClick(day.date);
+						}}
+					>
+						{day.date.format('DD')}
+					</CircleButton>
+				))}
+			</div>
+		</>
 	);
-}
+};
 
 const MonthSelector = (props: {
 	year: number;
@@ -264,5 +288,7 @@ const MonthSelector = (props: {
 };
 
 const YearSelector = () => {
-	const years = [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022];
+	const years = [
+		2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022,
+	];
 };
