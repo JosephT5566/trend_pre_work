@@ -138,6 +138,14 @@ export default function Calender({}: CalenderProps) {
 						onClick={(month) => setMonth(month)}
 					/>
 				);
+			case SelectActionKind.YearSelect:
+				return (
+					<YearSelector
+						year={year}
+						dispatch={dispatch}
+						onClick={(year) => setYear(year)}
+					/>
+				);
 			default:
 				break;
 		}
@@ -269,7 +277,7 @@ const MonthSelector = (props: {
 				</IconButton>
 				<Button
 					onClick={() => {
-						dispatch({ type: SelectActionKind.DaySelect });
+						dispatch({ type: SelectActionKind.YearSelect });
 					}}
 				>
 					{year}
@@ -298,8 +306,53 @@ const MonthSelector = (props: {
 	);
 };
 
-const YearSelector = () => {
-	const years = [
-		2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022,
-	];
+const YearSelector = (props: {
+	year: number;
+	dispatch: React.Dispatch<SelectAction>;
+	onClick: (month: number) => void;
+}) => {
+	const { year, dispatch, onClick } = props;
+	const [yearInit, setYearInit] = useState(Math.floor(year / 10) * 10 - 1);
+	const [yearsArray, setYearsArray] = useState<Array<number>>([]);
+
+	useEffect(() => {
+		const array = new Array(12).fill(0).map((_, index) => yearInit + index);
+		setYearsArray(array);
+	}, [yearInit]);
+
+	return (
+		<>
+			<NavBar>
+				<IconButton>
+					<ArrowBack />
+				</IconButton>
+				<Button
+					onClick={() => {
+						dispatch({ type: SelectActionKind.MonthSelect });
+					}}
+				>
+					{`${yearInit + 1}-${yearInit + 11}`}
+				</Button>
+				<IconButton>
+					<ArrowForward />
+				</IconButton>
+			</NavBar>
+			<div>
+				{yearsArray.map((year, index) => (
+					<CircleButton
+						key={index}
+						active={true}
+						today={true}
+						disabled={false}
+						onClick={() => {
+							// setSelectedDay(month.date);
+							dispatch({ type: SelectActionKind.MonthSelect });
+						}}
+					>
+						{year}
+					</CircleButton>
+				))}
+			</div>
+		</>
+	);
 };
