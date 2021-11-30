@@ -49,7 +49,7 @@ const selectTypeReducer = (state: SelectActionKind, action: SelectAction) => {
 		case SelectActionKind.MonthSelect:
 			return SelectActionKind.MonthSelect;
 		case SelectActionKind.DaySelect:
-			return SelectActionKind.MonthSelect;
+			return SelectActionKind.DaySelect;
 		default:
 			return state;
 	}
@@ -178,42 +178,89 @@ export default function Calender({}: CalenderProps) {
 
 	return (
 		<CalenderContainer>
-			<NavBar>
-				<IconButton onClick={handlePrevDay}>
-					<ArrowBack />
-				</IconButton>
-				<Button
-					onClick={() => {
-						dispatch({ type: SelectActionKind.MonthSelect });
-					}}
-				>{`${year} ${MONTH_TABLE[month].label}`}</Button>
-				<IconButton onClick={handleNextDay}>
-					<ArrowForward />
-				</IconButton>
-			</NavBar>
-			{/* <div>{getWeekday(moment())}</div> */}
-			<div>
-				{daysArray.map((day, index) => (
-					<CircleButton
-						key={index}
-						active={day.active}
-						today={day.isToday}
-						disabled={day.disabled}
-						onClick={() => {
-							setSelectedDay(day.date);
-						}}
-					>
-						{day.date.format('DD')}
-					</CircleButton>
-				))}
-			</div>
+			{step === SelectActionKind.DaySelect ? (
+				<>
+					<NavBar>
+						<IconButton onClick={handlePrevDay}>
+							<ArrowBack />
+						</IconButton>
+						<Button
+							onClick={() => {
+								dispatch({ type: SelectActionKind.MonthSelect });
+							}}
+						>{`${year} ${MONTH_TABLE[month].label}`}</Button>
+						<IconButton onClick={handleNextDay}>
+							<ArrowForward />
+						</IconButton>
+					</NavBar>
+					<div>
+						{daysArray.map((day, index) => (
+							<CircleButton
+								key={index}
+								active={day.active}
+								today={day.isToday}
+								disabled={day.disabled}
+								onClick={() => {
+									setSelectedDay(day.date);
+								}}
+							>
+								{day.date.format('DD')}
+							</CircleButton>
+						))}
+					</div>
+				</>
+			) : (
+				<MonthSelector year={year} month={month} dispatch={dispatch} onClick={(month) => setMonth(month)} />
+			)}
 			<div>{step}</div>
 		</CalenderContainer>
 	);
 }
 
-const MonthSelector = () => {
-	const month = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+const MonthSelector = (props: {
+	year: number;
+	month: number;
+	dispatch: React.Dispatch<SelectAction>;
+	onClick: (month: number) => void;
+}) => {
+	const { year, dispatch } = props;
+	const monthes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+
+	return (
+		<>
+			<NavBar>
+				<IconButton>
+					<ArrowBack />
+				</IconButton>
+				<Button
+					onClick={() => {
+						dispatch({ type: SelectActionKind.DaySelect });
+					}}
+				>
+					{year}
+				</Button>
+				<IconButton>
+					<ArrowForward />
+				</IconButton>
+			</NavBar>
+			<div>
+				{monthes.map((month, index) => (
+					<CircleButton
+						key={index}
+						active={true}
+						today={true}
+						disabled={false}
+						onClick={() => {
+							// setSelectedDay(month.date);
+							dispatch({ type: SelectActionKind.DaySelect });
+						}}
+					>
+						{MONTH_TABLE[month].label}
+					</CircleButton>
+				))}
+			</div>
+		</>
+	);
 };
 
 const YearSelector = () => {
