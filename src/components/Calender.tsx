@@ -1,12 +1,35 @@
 import React, { useState, useEffect, useReducer } from 'react';
 import moment, { Moment } from 'moment';
 
+import { styled } from '@material-ui/core/styles';
 import ArrowBack from '@material-ui/icons/ArrowBack';
 import ArrowForward from '@material-ui/icons/ArrowForward';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import { CircleButton } from 'components/base/Button';
 import { CENTURIES_TABLE, MONTH_TABLE } from 'constant/static';
+
+const CalenderContainer = styled('div')({
+	display: 'flex',
+	flexDirection: 'column',
+	alignItems: 'center',
+});
+
+const NavBar = styled('div')({
+	display: 'flex',
+});
+
+const DaySelectorContainer = styled('div')({
+	display: 'grid',
+});
+
+const MonthSelectorContainer = styled('div')({
+	display: 'grid',
+});
+
+const YearSelectorContainer = styled('div')({
+	display: 'grid',
+});
 
 enum SelectActionKind {
 	YearSelect = 'YearSelect',
@@ -154,33 +177,38 @@ export default function Calender({}: CalenderProps) {
 	};
 
 	return (
-		<div>
-			<IconButton onClick={handlePrevDay}>
-				<ArrowBack />
-			</IconButton>
-			<Button
-				onClick={() => {
-					dispatch({ type: SelectActionKind.MonthSelect });
-				}}
-			>{`${year} ${MONTH_TABLE[month].label}`}</Button>
-			<IconButton onClick={handleNextDay}>
-				<ArrowForward />
-			</IconButton>
-			{/* <div>{getWeekday(moment())}</div> */}
-			{daysArray.map((day, index) => (
-				<CircleButton
-					key={index}
-					active={day.active}
-					today={day.isToday}
-					disabled={day.disabled}
+		<CalenderContainer>
+			<NavBar>
+				<IconButton onClick={handlePrevDay}>
+					<ArrowBack />
+				</IconButton>
+				<Button
 					onClick={() => {
-						setSelectedDay(day.date);
+						dispatch({ type: SelectActionKind.MonthSelect });
 					}}
-				>
-					{day.date.format('DD')}
-				</CircleButton>
-			))}
-		</div>
+				>{`${year} ${MONTH_TABLE[month].label}`}</Button>
+				<IconButton onClick={handleNextDay}>
+					<ArrowForward />
+				</IconButton>
+			</NavBar>
+			{/* <div>{getWeekday(moment())}</div> */}
+			<div>
+				{daysArray.map((day, index) => (
+					<CircleButton
+						key={index}
+						active={day.active}
+						today={day.isToday}
+						disabled={day.disabled}
+						onClick={() => {
+							setSelectedDay(day.date);
+						}}
+					>
+						{day.date.format('DD')}
+					</CircleButton>
+				))}
+			</div>
+			<div>{step}</div>
+		</CalenderContainer>
 	);
 }
 
