@@ -21,14 +21,20 @@ const NavBar = styled('div')({
 
 const DaySelectorContainer = styled('div')({
 	display: 'grid',
+	gridTemplateColumns: 'repeat(7, 1fr)',
+	gap: '0.5em',
 });
 
 const MonthSelectorContainer = styled('div')({
 	display: 'grid',
+	gridTemplateColumns: 'repeat(4, 1fr)',
+	gap: '0.5em',
 });
 
 const YearSelectorContainer = styled('div')({
 	display: 'grid',
+	gridTemplateColumns: 'repeat(4, 1fr)',
+	gap: '0.5em',
 });
 
 enum SelectActionKind {
@@ -180,6 +186,7 @@ const DaySelector = (props: {
 }) => {
 	const { year, month, today, selectedDay, dispatch, onClick } = props;
 	const [daysArray, setDaysArray] = useState<Array<IDateButton>>([]);
+	const week = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 
 	useEffect(() => {
 		console.log('daysArray', daysArray);
@@ -252,7 +259,12 @@ const DaySelector = (props: {
 					<ArrowForward />
 				</IconButton>
 			</NavBar>
-			<div>
+			<DaySelectorContainer>
+				{week.map((weekday, index) => (
+					<div style={{ fontWeight: 'bold', textAlign: 'center' }} key={index}>
+						{weekday}
+					</div>
+				))}
 				{daysArray.map((day, index) => (
 					<CircleButton
 						key={index}
@@ -266,7 +278,7 @@ const DaySelector = (props: {
 						{day.date.format('DD')}
 					</CircleButton>
 				))}
-			</div>
+			</DaySelectorContainer>
 		</>
 	);
 };
@@ -302,7 +314,7 @@ const MonthSelector = (props: {
 					<ArrowForward />
 				</IconButton>
 			</NavBar>
-			<div>
+			<MonthSelectorContainer>
 				{monthesArray.map((month, index) => (
 					<CircleButton
 						key={index}
@@ -316,7 +328,7 @@ const MonthSelector = (props: {
 						{MONTH_TABLE[month.month].label}
 					</CircleButton>
 				))}
-			</div>
+			</MonthSelectorContainer>
 		</>
 	);
 };
@@ -361,7 +373,7 @@ const YearSelector = (props: {
 					<ArrowForward />
 				</IconButton>
 			</NavBar>
-			<div>
+			<YearSelectorContainer>
 				{yearsArray.map((year, index) => (
 					<CircleButton
 						key={index}
@@ -375,7 +387,7 @@ const YearSelector = (props: {
 						{year.year}
 					</CircleButton>
 				))}
-			</div>
+			</YearSelectorContainer>
 		</>
 	);
 };
