@@ -41,5 +41,5 @@ export const MONTH_TABLE: Record<number, IMonthDetail> = {
 	8: { bias: () => 5, label: 'Sep', days: () => 30 },
 	9: { bias: () => 0, label: 'Oct', days: () => 31 },
 	10: { bias: () => 3, label: 'Nov', days: () => 30 },
-	11: { bias: () => 6, label: 'Dec', days: () => 31 },
+	11: { bias: () => 5, label: 'Dec', days: () => 31 },
 };

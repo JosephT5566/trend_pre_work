@@ -87,18 +87,13 @@ type IYearButton = IButton & {
 const getWeekday = (date: Moment): number => {
 	const year = date.year();
 	const month = date.month();
-	const day = date.day();
+	const day = date.date();
 
 	const initDay = CENTURIES_TABLE[Math.floor(year / 100)];
 	const monthBias = MONTH_TABLE[month].bias(year);
 
-	if (initDay !== undefined) {
-		const weekday =
-			(initDay + (year % 100) + Math.floor((year % 100) / 4) + monthBias + day) % 7;
-		// console.log(date.weekday());
-		return weekday;
-	}
-	return 0;
+	const weekday = (initDay + (year % 100) + Math.floor((year % 100) / 4) + monthBias + day) % 7;
+	return weekday;
 };
 
 const getNextMonth = (month: number) => {
@@ -193,11 +188,11 @@ const DaySelector = (props: {
 	}, [daysArray]);
 
 	useEffect(() => {
-		const firstDay = moment(`${year}/${month}/1`);
+		const firstDay = moment(`${year}/${month + 1}/1`);
 		const weekdayOfFirst = getWeekday(firstDay);
 		setDaysArray(
 			daysOfMonth.map((_, index) => {
-				const dayIndex = index - weekdayOfFirst;
+				const dayIndex = index + 1 - weekdayOfFirst;
 				const monthDetail = MONTH_TABLE[month];
 
 				let date: Moment;
