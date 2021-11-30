@@ -25,10 +25,10 @@ const getWeekday = (date: Moment): number => {
 	const month = date.month();
 	const day = date.day();
 
-	const initDay = CENTURIES_TABLE.get(Math.floor(year / 100));
-	const monthBias = MONTH_TABLE.get(month)?.bias(year);
+	const initDay = CENTURIES_TABLE[Math.floor(year / 100)];
+	const monthBias = MONTH_TABLE[month].bias(year);
 
-	if (initDay !== undefined && monthBias !== undefined) {
+	if (initDay !== undefined) {
 		const weekday = (initDay + (year % 100) + Math.floor((year % 100) / 4) + monthBias + day) % 7;
 		// console.log(date.weekday());
 		return weekday;
@@ -48,7 +48,6 @@ const daysOfMonth = new Array(42).fill(0);
 export default function Calender({}: CalenderProps) {
 	const [year, setYear] = useState(moment().year());
 	const [month, setMonth] = useState(moment().month());
-	const [day, setDay] = useState(moment().day());
 	const [selectedDay, setSelectedDay] = useState(moment());
 	const [today] = useState(moment());
 	const [daysArray, setDaysArray] = useState<Array<IDate>>([]);
@@ -58,15 +57,16 @@ export default function Calender({}: CalenderProps) {
 	// }, []);
 
 	useEffect(() => {
+		console.log('selectedDay', selectedDay.format('YYYY-MM-DD'));
+	}, [selectedDay]);
+
+	useEffect(() => {
 		const firstDay = moment(`${year}/${month}/1`);
 		const weekdayOfFirst = getWeekday(firstDay);
 		setDaysArray(
 			daysOfMonth.map((_, index) => {
 				const dayIndex = index - weekdayOfFirst;
-				const monthDetail = MONTH_TABLE.get(month);
-				if (!monthDetail) {
-					return {} as IDate;
-				}
+				const monthDetail = MONTH_TABLE[month];
 
 				let date: Moment;
 				let disabled = true;
@@ -75,8 +75,8 @@ export default function Calender({}: CalenderProps) {
 
 				if (dayIndex <= 0) {
 					const prevMonth = getPrevMonth(month);
-					const prevMonthDetail = MONTH_TABLE.get(prevMonth);
-					const day = prevMonthDetail ? prevMonthDetail.days(year) + dayIndex : 0;
+					const prevMonthDetail = MONTH_TABLE[prevMonth];
+					const day = prevMonthDetail.days(year) + dayIndex;
 					date = moment(`${year}/${prevMonth + 1}/${day}`);
 					return {
 						date,
@@ -117,7 +117,7 @@ export default function Calender({}: CalenderProps) {
 	}, [daysArray]);
 
 	const handleNextDay = () => {
-		setDay((prev) => prev + 1);
+		setSelectedDay((prev) => prev.add(1, 'day'));
 	};
 
 	const handleNextMonth = () => {
@@ -129,7 +129,7 @@ export default function Calender({}: CalenderProps) {
 	};
 
 	const handlePrevDay = () => {
-		setDay((prev) => prev - 1);
+		setSelectedDay(moment());
 	};
 
 	const handlePrevMonth = () => {
@@ -145,7 +145,7 @@ export default function Calender({}: CalenderProps) {
 			<IconButton onClick={handlePrevDay}>
 				<ArrowBack />
 			</IconButton>
-			<Button>{year}</Button>
+			<Button>{`${year} ${MONTH_TABLE[month].label}`}</Button>
 			<IconButton onClick={handleNextDay}>
 				<ArrowForward />
 			</IconButton>
