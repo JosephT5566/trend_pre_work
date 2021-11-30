@@ -277,7 +277,7 @@ const MonthSelector = (props: {
 	dispatch: React.Dispatch<SelectAction>;
 	onClick: (month: number) => void;
 }) => {
-	const { year, month, dispatch } = props;
+	const { year, month, dispatch, onClick } = props;
 	const monthes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 	const monthesArray: Array<IMonthButton> = monthes.map((value) => {
 		return value === month
@@ -309,7 +309,7 @@ const MonthSelector = (props: {
 						active={month.active}
 						disabled={month.disabled}
 						onClick={() => {
-							// setSelectedDay(month.date);
+							onClick(month.month);
 							dispatch({ type: SelectActionKind.DaySelect });
 						}}
 					>
@@ -368,7 +368,7 @@ const YearSelector = (props: {
 						active={year.active}
 						disabled={year.disabled}
 						onClick={() => {
-							// setSelectedDay(month.date);
+							onClick(year.year);
 							dispatch({ type: SelectActionKind.MonthSelect });
 						}}
 					>
