@@ -116,26 +116,37 @@ export default function Calender({}: CalenderProps) {
 		setSelectedDay(moment());
 	};
 
+	const selectorFactory = () => {
+		switch (step) {
+			case SelectActionKind.DaySelect:
+				return (
+					<DaySelector
+						year={year}
+						month={month}
+						today={today}
+						selectedDay={selectedDay}
+						dispatch={dispatch}
+						onClick={(date) => setSelectedDay(date)}
+					/>
+				);
+			case SelectActionKind.MonthSelect:
+				return (
+					<MonthSelector
+						year={year}
+						month={month}
+						dispatch={dispatch}
+						onClick={(month) => setMonth(month)}
+					/>
+				);
+			default:
+				break;
+		}
+	};
+
 	return (
 		<CalenderContainer>
-			{step === SelectActionKind.DaySelect ? (
-				<DaySelector
-					year={year}
-					month={month}
-					today={today}
-					selectedDay={selectedDay}
-					dispatch={dispatch}
-					onClick={(date) => setSelectedDay(date)}
-				/>
-			) : (
-				<MonthSelector
-					year={year}
-					month={month}
-					dispatch={dispatch}
-					onClick={(month) => setMonth(month)}
-				/>
-			)}
 			<div>{step}</div>
+			{selectorFactory()}
 		</CalenderContainer>
 	);
 }
