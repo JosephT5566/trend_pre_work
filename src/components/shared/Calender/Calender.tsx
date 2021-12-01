@@ -7,6 +7,8 @@ import ArrowForward from '@material-ui/icons/ArrowForwardIos';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import { CircleButton } from 'components/base/Button';
+
+import { IDateButton, IMonthButton, IYearButton } from './type';
 import { CENTURIES_TABLE, MONTH_TABLE } from 'constant/static';
 
 const CalenderContainer = styled('div')({
@@ -70,24 +72,6 @@ interface CalenderProps {
 	date: string | null;
 	onSelect: (date: Moment) => void;
 }
-
-interface IButton {
-	disabled: boolean;
-	active: boolean;
-}
-
-type IDateButton = IButton & {
-	date: Moment;
-	isToday: boolean;
-};
-
-type IMonthButton = IButton & {
-	month: number;
-};
-
-type IYearButton = IButton & {
-	year: number;
-};
 
 const getWeekday = (date: Moment): number => {
 	const year = date.year();

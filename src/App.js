@@ -1,4 +1,4 @@
-import Calender from './components/Calender';
+import Calender from 'components/shared/Calender';
 
 function App() {
 	return (
