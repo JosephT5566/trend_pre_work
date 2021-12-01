@@ -69,7 +69,7 @@ const selectTypeReducer = (state: SelectActionKind, action: SelectAction) => {
 };
 
 interface CalenderProps {
-	date: string | null;
+	date: Moment;
 	onSelect: (date: Moment) => void;
 }
 
@@ -94,10 +94,9 @@ const getPrevMonth = (month: number) => {
 
 const daysOfMonth = new Array(42).fill(0);
 
-export default function Calender({}: CalenderProps) {
+export default function Calender({ date: selectedDay, onSelect: handleSelect }: CalenderProps) {
 	const [year, setYear] = useState(moment().year());
 	const [month, setMonth] = useState(moment().month());
-	const [selectedDay, setSelectedDay] = useState(moment());
 	const [today] = useState(moment());
 	const [step, dispatch] = useReducer(selectTypeReducer, SelectActionKind.DaySelect);
 
@@ -111,11 +110,11 @@ export default function Calender({}: CalenderProps) {
 	}, [selectedDay]);
 
 	const handleNextDay = () => {
-		setSelectedDay((prev) => moment(prev).add(1, 'day'));
+		handleSelect(moment(selectedDay).add(1, 'day'));
 	};
 
 	const handlePrevDay = () => {
-		setSelectedDay((prev) => moment(prev).subtract(1, 'day'));
+		handleSelect(moment(selectedDay).subtract(1, 'day'));
 	};
 
 	const handleNextMonth = () => {
@@ -144,7 +143,7 @@ export default function Calender({}: CalenderProps) {
 						today={today}
 						selectedDay={selectedDay}
 						dispatch={dispatch}
-						onClick={(date) => setSelectedDay(date)}
+						onClick={(date) => handleSelect(date)}
 						onClickNext={handleNextDay}
 						onClickPrev={handlePrevDay}
 					/>
