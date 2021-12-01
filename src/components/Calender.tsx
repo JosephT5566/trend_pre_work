@@ -2,20 +2,25 @@ import React, { useState, useEffect, useReducer } from 'react';
 import moment, { Moment } from 'moment';
 
 import { styled } from '@material-ui/core/styles';
-import ArrowBack from '@material-ui/icons/ArrowBack';
-import ArrowForward from '@material-ui/icons/ArrowForward';
+import ArrowBack from '@material-ui/icons/ArrowBackIosNew';
+import ArrowForward from '@material-ui/icons/ArrowForwardIos';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import { CircleButton } from 'components/base/Button';
 import { CENTURIES_TABLE, MONTH_TABLE } from 'constant/static';
 
 const CalenderContainer = styled('div')({
+	width: 'fit-content',
+	padding: '1em',
 	display: 'flex',
+	gap: '0.5em',
 	flexDirection: 'column',
 	alignItems: 'center',
+	border: 'solid 1px gray',
 });
 
 const NavBar = styled('div')({
+	width: '100%',
 	display: 'flex',
 });
 
@@ -186,13 +191,7 @@ export default function Calender({}: CalenderProps) {
 		}
 	};
 
-	return (
-		<CalenderContainer>
-			<div>{step}</div>
-			{selectorFactory()}
-			<div>{selectedDay.format('YYYY-MM-DD')}</div>
-		</CalenderContainer>
-	);
+	return <CalenderContainer>{selectorFactory()}</CalenderContainer>;
 }
 
 const DaySelector = (props: {
@@ -269,15 +268,21 @@ const DaySelector = (props: {
 		<>
 			<NavBar>
 				<IconButton onClick={onClickPrev}>
-					<ArrowBack />
+					<ArrowBack fontSize={'small'} />
 				</IconButton>
 				<Button
+					sx={{
+						flexGrow: 1,
+						fontWeight: 'bold',
+						color: 'black',
+						textTransform: 'initial',
+					}}
 					onClick={() => {
 						dispatch({ type: SelectActionKind.MonthSelect });
 					}}
-				>{`${year} ${MONTH_TABLE[month].label}`}</Button>
+				>{`${MONTH_TABLE[month].label} ${year}`}</Button>
 				<IconButton onClick={onClickNext}>
-					<ArrowForward />
+					<ArrowForward fontSize={'small'} />
 				</IconButton>
 			</NavBar>
 			<DaySelectorContainer>
@@ -324,9 +329,14 @@ const MonthSelector = (props: {
 		<>
 			<NavBar>
 				<IconButton onClick={onClickPrev}>
-					<ArrowBack />
+					<ArrowBack fontSize={'small'} />
 				</IconButton>
 				<Button
+					sx={{
+						flexGrow: 1,
+						fontWeight: 'bold',
+						color: 'black',
+					}}
 					onClick={() => {
 						dispatch({ type: SelectActionKind.YearSelect });
 					}}
@@ -334,7 +344,7 @@ const MonthSelector = (props: {
 					{year}
 				</Button>
 				<IconButton onClick={onClickNext}>
-					<ArrowForward />
+					<ArrowForward fontSize={'small'} />
 				</IconButton>
 			</NavBar>
 			<MonthSelectorContainer>
@@ -343,6 +353,7 @@ const MonthSelector = (props: {
 						key={index}
 						active={month.active}
 						disabled={month.disabled}
+						sx={{ p: '0.6em 0.5em' }}
 						onClick={() => {
 							onClick(month.month);
 							dispatch({ type: SelectActionKind.DaySelect });
@@ -389,9 +400,14 @@ const YearSelector = (props: {
 		<>
 			<NavBar>
 				<IconButton onClick={onClickPrev}>
-					<ArrowBack />
+					<ArrowBack fontSize={'small'} />
 				</IconButton>
 				<Button
+					sx={{
+						flexGrow: 1,
+						fontWeight: 'bold',
+						color: 'black',
+					}}
 					onClick={() => {
 						dispatch({ type: SelectActionKind.MonthSelect });
 					}}
@@ -399,7 +415,7 @@ const YearSelector = (props: {
 					{`${yearInit} - ${yearInit + 9}`}
 				</Button>
 				<IconButton onClick={onClickNext}>
-					<ArrowForward />
+					<ArrowForward fontSize={'small'} />
 				</IconButton>
 			</NavBar>
 			<YearSelectorContainer>
@@ -408,6 +424,7 @@ const YearSelector = (props: {
 						key={index}
 						active={year.active}
 						disabled={year.disabled}
+						sx={{ p: '0.6em 0.5em' }}
 						onClick={() => {
 							onClick(year.year);
 							dispatch({ type: SelectActionKind.MonthSelect });

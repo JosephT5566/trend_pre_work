@@ -1,7 +1,7 @@
 import Button, { ButtonProps } from '@material-ui/core/Button';
 
 export const CircleButton = (props: ButtonProps & { active: boolean; today?: boolean }) => {
-	const { active, today, children, ...otherProps } = props;
+	const { active, today, sx, children, ...otherProps } = props;
 
 	return (
 		<Button
@@ -9,8 +9,9 @@ export const CircleButton = (props: ButtonProps & { active: boolean; today?: boo
 				p: 0,
 				minWidth: '2em',
 				lineHeight: '2em',
-				borderRadius: '1em',
+				borderRadius: '1.5em',
 				color: today || active ? 'primary' : 'black',
+				...sx,
 			}}
 			variant={active ? 'contained' : 'text'}
 			{...otherProps}
