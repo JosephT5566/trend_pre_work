@@ -1,3 +1,5 @@
+export const NUMBER_REGEX = /^\d+$/;
+
 export const CENTURIES_TABLE: Record<number, number> = {
 	17: 4,
 	18: 2,

@@ -101,7 +101,7 @@ export default function Calender({ date: selectedDay, onSelect: handleSelect }: 
 	const [step, dispatch] = useReducer(selectTypeReducer, SelectActionKind.DaySelect);
 
 	useEffect(() => {
-		console.log('selectedDay', selectedDay.format('YYYY-MM-DD'));
+		// console.log('selectedDay', selectedDay.format('YYYY-MM-DD'));
 		const newYear = selectedDay.year();
 		const newMonth = selectedDay.month();
 
@@ -191,9 +191,9 @@ const DaySelector = (props: {
 	const [daysArray, setDaysArray] = useState<Array<IDateButton>>([]);
 	const week = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 
-	useEffect(() => {
-		console.log('daysArray', daysArray);
-	}, [daysArray]);
+	// useEffect(() => {
+	// 	console.log('daysArray', daysArray);
+	// }, [daysArray]);
 
 	useEffect(() => {
 		const firstDay = moment(`${year}/${month + 1}/1`);

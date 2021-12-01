@@ -12,7 +12,7 @@ function App() {
 			<header className="App-header"></header>
 			<div>{date.format('YYYY-MM-DD')}</div>
 			<Calender date={date} onSelect={(date) => setDate(date)} />
-			<DatePicker date={date} onSelect={(date) => setDate(date)} />
+			<DatePicker date={date} onChange={(date) => setDate(date)} />
 		</div>
 	);
 }
