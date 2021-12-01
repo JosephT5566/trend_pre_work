@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import moment, { Moment } from 'moment';
 
 import TextField from '@material-ui/core/TextField';
@@ -16,10 +16,11 @@ interface DatePickerProps {
 
 export default function DatePicker({ date, onChange }: DatePickerProps) {
 	const [value, setValue] = useState(date.format('YYYY-MM-DD'));
-	const [anchorEl, setAnchorEl] = React.useState<HTMLInputElement | null>(null);
+	const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+	const inputRef = useRef(null);
 
-	const handleMouseDown = (event: React.MouseEvent<HTMLInputElement>) => {
-		setAnchorEl(event.currentTarget);
+	const handleOpenPopover = () => {
+		setAnchorEl(inputRef.current);
 	};
 
 	const handleClose = () => {
@@ -58,16 +59,17 @@ export default function DatePicker({ date, onChange }: DatePickerProps) {
 	return (
 		<div>
 			<TextField
-				// sx={{ m: 1, width: '25ch' }}
+				ref={inputRef}
 				InputProps={{
 					startAdornment: (
 						<InputAdornment position="start">
-							<CalendarToday />
+							<IconButton onClick={handleOpenPopover}>
+								<CalendarToday />
+							</IconButton>
 						</InputAdornment>
 					),
 				}}
 				value={value}
-				onMouseUp={handleMouseDown}
 				onChange={handleChange}
 			/>
 			<Popover
