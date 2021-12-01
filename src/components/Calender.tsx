@@ -113,19 +113,36 @@ export default function Calender({}: CalenderProps) {
 	const [step, dispatch] = useReducer(selectTypeReducer, SelectActionKind.DaySelect);
 
 	useEffect(() => {
-		console.log('step', step);
-	}, [step]);
-
-	useEffect(() => {
 		console.log('selectedDay', selectedDay.format('YYYY-MM-DD'));
+		const newYear = selectedDay.year();
+		const newMonth = selectedDay.month();
+
+		year !== newYear && setYear(newYear);
+		month !== newMonth && setMonth(newMonth);
 	}, [selectedDay]);
 
 	const handleNextDay = () => {
-		setSelectedDay((prev) => prev.add(1, 'day'));
+		setSelectedDay((prev) => moment(prev).add(1, 'day'));
 	};
 
 	const handlePrevDay = () => {
-		setSelectedDay(moment());
+		setSelectedDay((prev) => moment(prev).subtract(1, 'day'));
+	};
+
+	const handleNextMonth = () => {
+		setMonth((prev) => (prev + 1 > 11 ? 0 : prev + 1));
+	};
+
+	const handlePrevMonth = () => {
+		setMonth((prev) => (prev - 1 < 0 ? 11 : prev - 1));
+	};
+
+	const handleNextYear = () => {
+		setYear((prev) => prev + 1);
+	};
+
+	const handlePrevYear = () => {
+		setYear((prev) => prev - 1);
 	};
 
 	const selectorFactory = () => {
@@ -139,6 +156,8 @@ export default function Calender({}: CalenderProps) {
 						selectedDay={selectedDay}
 						dispatch={dispatch}
 						onClick={(date) => setSelectedDay(date)}
+						onClickNext={handleNextDay}
+						onClickPrev={handlePrevDay}
 					/>
 				);
 			case SelectActionKind.MonthSelect:
@@ -148,6 +167,8 @@ export default function Calender({}: CalenderProps) {
 						month={month}
 						dispatch={dispatch}
 						onClick={(month) => setMonth(month)}
+						onClickNext={handleNextMonth}
+						onClickPrev={handlePrevMonth}
 					/>
 				);
 			case SelectActionKind.YearSelect:
@@ -156,6 +177,8 @@ export default function Calender({}: CalenderProps) {
 						year={year}
 						dispatch={dispatch}
 						onClick={(year) => setYear(year)}
+						onClickNext={handleNextYear}
+						onClickPrev={handlePrevYear}
 					/>
 				);
 			default:
@@ -167,6 +190,7 @@ export default function Calender({}: CalenderProps) {
 		<CalenderContainer>
 			<div>{step}</div>
 			{selectorFactory()}
+			<div>{selectedDay.format('YYYY-MM-DD')}</div>
 		</CalenderContainer>
 	);
 }
@@ -178,8 +202,10 @@ const DaySelector = (props: {
 	selectedDay: Moment;
 	dispatch: React.Dispatch<SelectAction>;
 	onClick: (month: Moment) => void;
+	onClickNext: () => void;
+	onClickPrev: () => void;
 }) => {
-	const { year, month, today, selectedDay, dispatch, onClick } = props;
+	const { year, month, today, selectedDay, dispatch, onClick, onClickNext, onClickPrev } = props;
 	const [daysArray, setDaysArray] = useState<Array<IDateButton>>([]);
 	const week = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 
@@ -242,7 +268,7 @@ const DaySelector = (props: {
 	return (
 		<>
 			<NavBar>
-				<IconButton>
+				<IconButton onClick={onClickPrev}>
 					<ArrowBack />
 				</IconButton>
 				<Button
@@ -250,7 +276,7 @@ const DaySelector = (props: {
 						dispatch({ type: SelectActionKind.MonthSelect });
 					}}
 				>{`${year} ${MONTH_TABLE[month].label}`}</Button>
-				<IconButton>
+				<IconButton onClick={onClickNext}>
 					<ArrowForward />
 				</IconButton>
 			</NavBar>
@@ -283,8 +309,10 @@ const MonthSelector = (props: {
 	month: number;
 	dispatch: React.Dispatch<SelectAction>;
 	onClick: (month: number) => void;
+	onClickNext: () => void;
+	onClickPrev: () => void;
 }) => {
-	const { year, month, dispatch, onClick } = props;
+	const { year, month, dispatch, onClick, onClickNext, onClickPrev } = props;
 	const monthes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 	const monthesArray: Array<IMonthButton> = monthes.map((value) => {
 		return value === month
@@ -295,7 +323,7 @@ const MonthSelector = (props: {
 	return (
 		<>
 			<NavBar>
-				<IconButton>
+				<IconButton onClick={onClickPrev}>
 					<ArrowBack />
 				</IconButton>
 				<Button
@@ -305,7 +333,7 @@ const MonthSelector = (props: {
 				>
 					{year}
 				</Button>
-				<IconButton>
+				<IconButton onClick={onClickNext}>
 					<ArrowForward />
 				</IconButton>
 			</NavBar>
@@ -332,10 +360,16 @@ const YearSelector = (props: {
 	year: number;
 	dispatch: React.Dispatch<SelectAction>;
 	onClick: (month: number) => void;
+	onClickNext: () => void;
+	onClickPrev: () => void;
 }) => {
-	const { year, dispatch, onClick } = props;
+	const { year, dispatch, onClick, onClickNext, onClickPrev } = props;
 	const [yearInit, setYearInit] = useState(Math.floor(year / 10) * 10);
 	const [yearsArray, setYearsArray] = useState<Array<IYearButton>>([]);
+
+	useEffect(() => {
+		setYearInit(Math.floor(year / 10) * 10);
+	}, [year]);
 
 	useEffect(() => {
 		const array = new Array(10).fill(0).map((_, index) => {
@@ -349,12 +383,12 @@ const YearSelector = (props: {
 			...array,
 			{ year: yearInit + 10, disabled: true, active: false },
 		]);
-	}, [yearInit]);
+	}, [yearInit, year]);
 
 	return (
 		<>
 			<NavBar>
-				<IconButton>
+				<IconButton onClick={onClickPrev}>
 					<ArrowBack />
 				</IconButton>
 				<Button
@@ -364,7 +398,7 @@ const YearSelector = (props: {
 				>
 					{`${yearInit} - ${yearInit + 9}`}
 				</Button>
-				<IconButton>
+				<IconButton onClick={onClickNext}>
 					<ArrowForward />
 				</IconButton>
 			</NavBar>
