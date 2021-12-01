@@ -2,6 +2,7 @@ import { useState } from 'react';
 import moment, { Moment } from 'moment';
 
 import Calender from 'components/shared/Calender';
+import DatePicker from 'components/shared/DatePicker';
 
 function App() {
 	const [date, setDate] = useState<Moment>(moment());
@@ -9,8 +10,9 @@ function App() {
 	return (
 		<div className="App">
 			<header className="App-header"></header>
-			<Calender date={date} onSelect={(date) => setDate(date)} />
 			<div>{date.format('YYYY-MM-DD')}</div>
+			<Calender date={date} onSelect={(date) => setDate(date)} />
+			<DatePicker date={date} onSelect={(date) => setDate(date)} />
 		</div>
 	);
 }
