@@ -1,7 +1,5 @@
-import { red } from '@material-ui/core/colors';
-
 export const palette = {
-	primary: {
+	secondary: {
 		main: '#db3d44',
 	},
 };

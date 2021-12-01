@@ -10,9 +10,10 @@ export const CircleButton = (props: ButtonProps & { active: boolean; today?: boo
 				minWidth: '2em',
 				lineHeight: '2em',
 				borderRadius: '1.5em',
-				color: today || active ? 'primary' : 'black',
+				color: today || active ? 'secondary' : 'black',
 				...sx,
 			}}
+			color={'secondary'}
 			variant={active ? 'contained' : 'text'}
 			{...otherProps}
 		>
