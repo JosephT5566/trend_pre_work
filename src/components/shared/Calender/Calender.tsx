@@ -74,9 +74,9 @@ interface CalenderProps {
 }
 
 const getWeekday = (date: Moment): number => {
-	const year = date.year();
-	const month = date.month();
-	const day = date.date();
+	const year = date.get('year');
+	const month = date.get('month');
+	const day = date.get('date');
 
 	const initDay = CENTURIES_TABLE[Math.floor(year / 100)];
 	const monthBias = MONTH_TABLE[month].bias(year);
@@ -95,15 +95,15 @@ const getPrevMonth = (month: number) => {
 const daysOfMonth = new Array(42).fill(0);
 
 export default function Calender({ date: selectedDay, onSelect: handleSelect }: CalenderProps) {
-	const [year, setYear] = useState(moment().year());
-	const [month, setMonth] = useState(moment().month());
+	const [year, setYear] = useState(moment().get('year'));
+	const [month, setMonth] = useState(moment().get('month'));
 	const [today] = useState(moment());
 	const [step, dispatch] = useReducer(selectTypeReducer, SelectActionKind.DaySelect);
 
 	useEffect(() => {
 		// console.log('selectedDay', selectedDay.format('YYYY-MM-DD'));
-		const newYear = selectedDay.year();
-		const newMonth = selectedDay.month();
+		const newYear = selectedDay.get('year');
+		const newMonth = selectedDay.get('month');
 
 		year !== newYear && setYear(newYear);
 		month !== newMonth && setMonth(newMonth);
