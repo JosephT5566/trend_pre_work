@@ -1,6 +1,6 @@
 # TREND Pre Work
 
-## Execute process
+## Execution process
 
 1. `yarn install`
 
