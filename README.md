@@ -1,18 +1,10 @@
 # TREND Pre Work
 
-## Description
+## Execute process
 
-### Install
+1. `yarn install`
 
-```
-yarn install
-```
-
-### Execute
-
-```
-yarn start
-```
+2. `yarn start`
 
 ## Reference
 
