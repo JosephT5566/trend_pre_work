@@ -6,7 +6,7 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
 import Popover from '@material-ui/core/Popover';
 import CalendarToday from '@material-ui/icons/CalendarToday';
-import Calender from './Calender';
+import Calendar from './Calendar';
 import { NUMBER_REGEX } from 'constant/static';
 
 interface DatePickerProps {
@@ -73,7 +73,7 @@ export default function DatePicker({ date, onChange }: DatePickerProps) {
 				onChange={handleChange}
 			/>
 			<Popover
-				id={open ? 'datepicker-calender' : undefined}
+				id={open ? 'datepicker-calendar' : undefined}
 				open={open}
 				anchorEl={anchorEl}
 				onClose={handleClose}
@@ -82,7 +82,7 @@ export default function DatePicker({ date, onChange }: DatePickerProps) {
 					horizontal: 'left',
 				}}
 			>
-				<Calender date={date} onSelect={onChange} />
+				<Calendar date={date} onSelect={onChange} />
 			</Popover>
 		</div>
 	);
