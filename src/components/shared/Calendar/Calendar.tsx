@@ -110,11 +110,11 @@ export default function Calender({ date: selectedDay, onSelect: handleSelect }: 
 	}, [selectedDay]);
 
 	const handleNextDay = () => {
-		handleSelect(moment(selectedDay).add(1, 'day'));
+		handleSelect(moment(selectedDay, 'YYYY-MM-DD').add(1, 'day'));
 	};
 
 	const handlePrevDay = () => {
-		handleSelect(moment(selectedDay).subtract(1, 'day'));
+		handleSelect(moment(selectedDay, 'YYYY-MM-DD').subtract(1, 'day'));
 	};
 
 	const handleNextMonth = () => {
@@ -196,7 +196,7 @@ const DaySelector = (props: {
 	// }, [daysArray]);
 
 	useEffect(() => {
-		const firstDay = moment(`${year}/${month + 1}/1`);
+		const firstDay = moment(`${year}/${month + 1}/1`, 'YYYY-MM-DD');
 		const weekdayOfFirst = getWeekday(firstDay);
 		setDaysArray(
 			daysOfMonth.map((_, index) => {
@@ -212,7 +212,7 @@ const DaySelector = (props: {
 					const prevMonth = getPrevMonth(month);
 					const prevMonthDetail = MONTH_TABLE[prevMonth];
 					const day = prevMonthDetail.days(year) + dayIndex;
-					date = moment(`${year}/${prevMonth + 1}/${day}`);
+					date = moment(`${year}/${prevMonth + 1}/${day}`, 'YYYY-MM-DD');
 					return {
 						date,
 						disabled,
@@ -223,7 +223,7 @@ const DaySelector = (props: {
 				if (dayIndex > monthDetail.days(year)) {
 					const nextMonth = getNextMonth(month);
 					const day = dayIndex - monthDetail.days(year);
-					date = moment(`${year}/${nextMonth + 1}/${day}`);
+					date = moment(`${year}/${nextMonth + 1}/${day}`, 'YYYY-MM-DD');
 					return {
 						date,
 						disabled,
@@ -232,7 +232,7 @@ const DaySelector = (props: {
 					};
 				}
 
-				date = moment(`${year}/${month + 1}/${dayIndex}`);
+				date = moment(`${year}/${month + 1}/${dayIndex}`, 'YYYY-MM-DD');
 				disabled = false;
 				isToday = date.isSame(today.format('YYYY-MM-DD'));
 				active = date.isSame(selectedDay.format('YYYY-MM-DD'));

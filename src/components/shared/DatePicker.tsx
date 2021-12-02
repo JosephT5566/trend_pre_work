@@ -46,7 +46,9 @@ export default function DatePicker({ date, onChange }: DatePickerProps) {
 	useEffect(() => {
 		const DATE_REGEX = /\d{4}[-]\d{2}[-]\d{2}/;
 
-		DATE_REGEX.test(value) && moment(value).isValid() && onChange(moment(value));
+		DATE_REGEX.test(value) &&
+			moment(value, 'YYYY-MM-DD').isValid() &&
+			onChange(moment(value, 'YYYY-MM-DD'));
 	}, [value, onChange]);
 
 	useEffect(() => {
@@ -71,7 +73,7 @@ export default function DatePicker({ date, onChange }: DatePickerProps) {
 				}}
 				value={value}
 				onChange={handleChange}
-				error={!moment(value).isValid()}
+				error={!moment(value, 'YYYY-MM-DD').isValid()}
 			/>
 			<Popover
 				id={open ? 'datepicker-calendar' : undefined}
