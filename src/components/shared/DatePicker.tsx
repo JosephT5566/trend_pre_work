@@ -34,7 +34,7 @@ export default function DatePicker({ date, onChange }: DatePickerProps) {
 		const YEAR_REGEX = /(\d{4})(\d*)/;
 		const MONTH_REGEX = /(\d{4}[/\-]\d{2})(\d*)/;
 
-		console.log(filteredValue);
+		// console.log(filteredValue);
 		if (filteredValue === '' || NUMBER_REGEX.test(filteredValue)) {
 			const formattedValue = filteredValue
 				.replace(YEAR_REGEX, (_, p1, p2) => (p2.length > 0 ? [p1, p2].join('-') : p1))
@@ -71,6 +71,7 @@ export default function DatePicker({ date, onChange }: DatePickerProps) {
 				}}
 				value={value}
 				onChange={handleChange}
+				error={!moment(value).isValid()}
 			/>
 			<Popover
 				id={open ? 'datepicker-calendar' : undefined}
@@ -82,7 +83,13 @@ export default function DatePicker({ date, onChange }: DatePickerProps) {
 					horizontal: 'left',
 				}}
 			>
-				<Calendar date={date} onSelect={onChange} />
+				<Calendar
+					date={date}
+					onSelect={(date) => {
+						onChange(date);
+						handleClose();
+					}}
+				/>
 			</Popover>
 		</div>
 	);
