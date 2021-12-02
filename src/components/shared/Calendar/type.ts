@@ -1,5 +1,11 @@
 import { Moment } from 'moment';
 
+export interface IMonthDetail {
+	bias: (year: number) => number;
+	label: string;
+	days: (year: number) => number;
+}
+
 interface IButton {
 	disabled: boolean;
 	active: boolean;
