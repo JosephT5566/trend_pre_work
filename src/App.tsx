@@ -11,8 +11,8 @@ function App() {
 		<div className="App">
 			<header className="App-header"></header>
 			<div>{date.format('YYYY-MM-DD')}</div>
-			<Calendar date={date} onSelect={(date) => setDate(date)} />
-			<DatePicker date={date} onChange={(date) => setDate(date)} />
+			<Calendar date={date} onSelect={setDate} />
+			<DatePicker date={date} onChange={setDate} />
 		</div>
 	);
 }

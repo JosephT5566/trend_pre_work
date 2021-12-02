@@ -32,7 +32,7 @@ export default function DatePicker({ date, onChange }: DatePickerProps) {
 		const filteredValue = value.replace(/-/g, '');
 
 		const YEAR_REGEX = /(\d{4})(\d*)/;
-		const MONTH_REGEX = /(\d{4}[/\-]\d{2})(\d*)/;
+		const MONTH_REGEX = /(\d{4}[-]\d{2})(\d*)/;
 
 		// console.log(filteredValue);
 		if (filteredValue === '' || NUMBER_REGEX.test(filteredValue)) {
@@ -44,10 +44,10 @@ export default function DatePicker({ date, onChange }: DatePickerProps) {
 	};
 
 	useEffect(() => {
-		const DATE_REGEX = /\d{4}[/\-]\d{2}[/\-]\d{2}/;
+		const DATE_REGEX = /\d{4}[-]\d{2}[-]\d{2}/;
 
 		DATE_REGEX.test(value) && moment(value).isValid() && onChange(moment(value));
-	}, [value]);
+	}, [value, onChange]);
 
 	useEffect(() => {
 		// console.log(moment(value).format('YYYY-MM-DD'));
