@@ -95,18 +95,18 @@ const getPrevMonth = (month: number) => {
 const daysOfMonth = new Array(42).fill(0);
 
 export default function Calender({ date: selectedDay, onSelect: handleSelect }: CalenderProps) {
-	const [year, setYear] = useState(moment().get('year'));
-	const [month, setMonth] = useState(moment().get('month'));
-	const [today] = useState(moment());
+	const today = moment();
+	const [year, setYear] = useState(today.get('year'));
+	const [month, setMonth] = useState(today.get('month'));
 	const [step, dispatch] = useReducer(selectTypeReducer, SelectActionKind.DaySelect);
 
 	useEffect(() => {
 		// console.log('selectedDay', selectedDay.format('YYYY-MM-DD'));
-		const newYear = selectedDay.get('year');
-		const newMonth = selectedDay.get('month');
+		const selectedYear = selectedDay.get('year');
+		const selectedMonth = selectedDay.get('month');
 
-		setYear(newYear);
-		setMonth(newMonth);
+		setYear(selectedYear);
+		setMonth(selectedMonth);
 	}, [selectedDay]);
 
 	const handleNextDay = () => {
