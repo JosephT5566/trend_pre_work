@@ -100,20 +100,21 @@ export default function Calender({ date: selectedDay, onSelect: handleSelect }: 
 	const [today] = useState(moment());
 	const [step, dispatch] = useReducer(selectTypeReducer, SelectActionKind.DaySelect);
 
-	const handleNextDay = () => {
-		const nextDay = moment(selectedDay).add(1, 'day');
+	useEffect(() => {
+		// console.log('selectedDay', selectedDay.format('YYYY-MM-DD'));
+		const newYear = selectedDay.get('year');
+		const newMonth = selectedDay.get('month');
 
-		year !== nextDay.get('year') && setYear(nextDay.get('year'));
-		month !== nextDay.get('month') && setMonth(nextDay.get('month'));
-		handleSelect(nextDay);
+		setYear(newYear);
+		setMonth(newMonth);
+	}, [selectedDay]);
+
+	const handleNextDay = () => {
+		handleSelect(moment(selectedDay).add(1, 'day'));
 	};
 
 	const handlePrevDay = () => {
-		const prevDay = moment(selectedDay).subtract(1, 'day');
-
-		year !== prevDay.get('year') && setYear(prevDay.get('year'));
-		month !== prevDay.get('month') && setMonth(prevDay.get('month'));
-		handleSelect(prevDay);
+		handleSelect(moment(selectedDay).subtract(1, 'day'));
 	};
 
 	const handleNextMonth = () => {
